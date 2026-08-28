@@ -1,59 +1,57 @@
-# Transit Task Manager (polden)
+# Transit Task Manager (gitpoldan)
 
-A multi-tenant "transit" task manager for Dify Workflow and Agent apps. Tasks are
-stored in a **MinIO / S3 bucket**, one SQLite database per tenant
-(`{prefix}/{namespace?}/{tenant}.sqlite`). The plugin exposes a small task API as
-Dify tools: create / read / list / update / status-transition / delete, plus TTL
-auto-expiration and per-tenant statistics.
+Multi-tenant transit task manager for Dify Workflow and Agent apps. Tasks are
+stored in a **MinIO / S3 bucket**, one SQLite database per tenant. Exposes
+create / read / list / update / status-transition / delete tools, TTL
+auto-expiration, and per-tenant statistics.
 
-## Why this design
+Author: **gitpoldan**. Provider id: `gitpoldan/task_manager`.
 
-- **No own web server.** Dify's plugin runtime is the transport; the tools *are*
-  the API that Workflow/Agent nodes call. FastAPI is unnecessary.
-- **SQLModel over SQLite, per tenant.** Each tool call pulls the tenant DB from
-  S3 into a temp file, runs SQLModel operations, and (for writes) uploads it back.
-- **Safe concurrency.** Writes are serialized with a lease lock object
-  (`{tenant}.lock`) and additionally guarded by an ETag precondition
-  (`IfMatch` / `IfNoneMatch`) on the database object, retrying on conflict.
-- **Lazy TTL.** Plugins have no scheduler, so a task whose TTL passed is
-  auto-expired on the next access (`get_task` / `list_tasks` / `get_stats`) or in
-  bulk via `sweep_ttl`.
+## Features
 
-## Storage backend
+- **S3-backed storage** — one SQLite DB per tenant in your bucket; no separate server.
+- **Status state machine** — validated transitions with optional metadata on each change.
+- **Concurrency safe** — lease lock + ETag conditional writes with retry on conflict.
+- **Lazy TTL** — expired tasks cleaned on access or via `sweep_ttl`.
 
-This plugin needs its own S3 / MinIO connection. Dify does not let one plugin
-reuse another plugin's provider, so the credentials mirror the shape of the
-`shenfor/minio_s3_storage` datasource plugin (`endpoint`, `access_key_id`,
-`secret_access_key`, `use_https`) plus `bucket`, `region`, `prefix`. Point them at
-the same MinIO server to keep everything in one place.
+## Setup
 
-The bucket must already exist. Databases are created automatically on first write.
+1. Create an S3 or MinIO bucket (must already exist).
+2. In Dify, install the plugin and open **Tool provider → Transit Task Manager**.
+3. Configure credentials:
 
-## Status model
+| Field | Required | Description |
+|-------|----------|-------------|
+| `endpoint` | No | MinIO host (empty = AWS S3) |
+| `access_key_id` | Yes | Access key |
+| `secret_access_key` | Yes | Secret key |
+| `use_https` | No | HTTPS for custom endpoint (default `true`) |
+| `bucket` | Yes | Bucket name |
+| `region` | No | AWS region (default `us-east-1`) |
+| `prefix` | No | Base key prefix for all tenant DBs |
 
-`created` -> `pending` -> `in_progress` -> `completed` / `cancelled` / `failed` /
-`expired`. Transitions are validated by a state machine (override with
-`force=true`). Every transition can carry a JSON `metadata` object, recorded on
-the task and in an append-only history table.
+4. Add task tools to a Workflow or Agent node. Every call requires a `tenant` id;
+   optional `namespace` groups tenants under a sub-path.
 
-## Tools
+## Usage
 
-| Tool | Purpose |
-| --- | --- |
-| `create_task` | Create a task (optional TTL, payload, metadata). |
-| `get_task` | Fetch one task by id; evaluates TTL. |
-| `list_tasks` | List/filter tasks by status with paging. |
-| `update_task` | Patch data fields without changing status. |
-| `set_status` | Transition status with metadata (state machine). |
-| `delete_task` | Hard-delete, or soft-delete (cancel). |
-| `sweep_ttl` | Bulk-expire stale tasks (supports `dry_run`). |
-| `get_stats` | Task counts per status for a tenant. |
+Example workflow:
 
-Every call requires `tenant`. An optional `namespace` groups several tenant
-databases under a logical sub-path.
+1. **Tool: create_task** — `tenant`, `title`, optional `payload`, `ttl_seconds`
+2. **Tool: set_status** — transition to `in_progress` / `completed` with metadata
+3. **Tool: get_task** or **list_tasks** — read back state for downstream nodes
 
-## Concurrency note
+Status flow: `created` → `pending` → `in_progress` → `completed` / `cancelled` /
+`failed` / `expired`.
 
-Conditional writes require an S3-compatible store that supports `If-Match` /
-`If-None-Match` on `PutObject` (AWS S3 and recent MinIO releases do). Without
-them the lease lock still serializes writers, but the ETag safety net is a no-op.
+## Privacy
+
+Task data is written only to your configured bucket. See [PRIVACY.md](PRIVACY.md).
+
+## Support
+
+- Source: https://github.com/gitpoldan/dify/tree/main/polden-plugins/task_manager
+- GitHub Issues: https://github.com/gitpoldan/dify/issues
+- Email: bv2020donch@gmail.com
+
+Russian documentation: [readme/README_ru_RU.md](readme/README_ru_RU.md).

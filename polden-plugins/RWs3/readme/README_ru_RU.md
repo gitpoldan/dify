@@ -60,7 +60,7 @@ dify plugin package ./
 python package.py
 ```
 
-Результат: `../gitpoldan-RWs3_0.0.1.difypkg`.
+Результат: `../gitpoldan-rws3_0.0.1.difypkg`.
 
 ## Лицензия
 

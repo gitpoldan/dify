@@ -1,0 +1,33 @@
+version: 0.0.1
+type: plugin
+author: gitpoldan
+name: rws3
+label:
+  en_US: S3 Read/Write
+  ru_RU: S3 — чтение и запись
+description:
+  en_US: Simple reliable S3/MinIO file operations — list, read, write, delete.
+  ru_RU: Простые операции с файлами в S3/MinIO — список, чтение, запись, удаление.
+icon: icon.svg
+tags:
+  - utilities
+  - productivity
+resource:
+  memory: 134217728
+  permission: {}
+plugins:
+  tools:
+    - provider/rws3.yaml
+meta:
+  version: 0.0.1
+  minimum_dify_version: "1.4.0"
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+created_at: 2026-08-28T00:00:00+00:00
+privacy: PRIVACY.md
+verified: false

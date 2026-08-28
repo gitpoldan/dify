@@ -149,7 +149,7 @@ dify plugin package ./
 python package.py
 ```
 
-Produces `../gitpoldan-RWs3_0.0.1.difypkg`.
+Produces `../gitpoldan-rws3_0.0.1.difypkg`.
 
 ## Dependencies
 
