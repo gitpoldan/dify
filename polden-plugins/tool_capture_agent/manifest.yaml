@@ -1,6 +1,8 @@
 version: 0.3.3
 type: plugin
 author: gitpoldan
+repo: https://github.com/gitpoldan/dify/tree/main/polden-plugins/tool_capture_agent
+contact: bv2020donch@gmail.com
 name: tool_capture_agent
 label:
   en_US: Tool-Capture Agent

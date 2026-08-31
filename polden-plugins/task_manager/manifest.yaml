@@ -1,6 +1,8 @@
 version: 0.0.1
 type: plugin
 author: gitpoldan
+repo: https://github.com/gitpoldan/dify/tree/main/polden-plugins/task_manager
+contact: bv2020donch@gmail.com
 name: task_manager
 label:
   en_US: Transit Task Manager

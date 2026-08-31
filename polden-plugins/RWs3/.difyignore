@@ -1,0 +1,15 @@
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.env
+*.difypkg
+tests/
+.uv/
+uv.lock
+GUIDE.md
+MARKETPLACE_PR.md

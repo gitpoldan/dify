@@ -1,6 +1,8 @@
 version: 1.1.1
 type: plugin
 author: gitpoldan
+repo: https://github.com/gitpoldan/dify/tree/main/polden-plugins/fusion_query_engine
+contact: bv2020donch@gmail.com
 name: fusion_query_engine
 label:
   en_US: Fusion Query Engine

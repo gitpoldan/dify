@@ -1,6 +1,8 @@
 version: 1.0.7
 type: plugin
 author: gitpoldan
+repo: https://github.com/gitpoldan/dify/tree/main/polden-plugins/qdrant-hybrid
+contact: bv2020donch@gmail.com
 name: qdrant_hybrid_retriever
 label:
   en_US: Qdrant Hybrid Retriever

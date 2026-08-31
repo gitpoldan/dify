@@ -1,6 +1,8 @@
 version: 0.0.1
 type: plugin
 author: gitpoldan
+repo: https://github.com/gitpoldan/dify/tree/main/polden-plugins/RWs3
+contact: bv2020donch@gmail.com
 name: rws3
 label:
   en_US: S3 Read/Write
